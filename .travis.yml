@@ -1,0 +1,23 @@
+language: python
+cache: pip
+services:
+  - docker
+env:
+  global:
+    - CONTAINER: web
+    - APPLICATION_NAME: nebula
+    - DJANGO_PORT: 8000
+before_install:
+  - cp ${APPLICATION_NAME}/config.py.example ${APPLICATION_NAME}/config.py
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker-compose up -d
+# install:
+#   - ./wait-for-it.sh $CONTAINER:$DJANGO_PORT -- docker-compose exec $CONTAINER pip install coverage pre-commit
+#   - docker-compose exec $CONTAINER pre-commit install
+# script:
+#   - docker-compose exec $CONTAINER pre-commit run --all-files --show-diff-on-failure
+#   - docker-compose exec $CONTAINER coverage run manage.py test
+# after_script:
+#   - docker-compose exec $CONTAINER coverage report --omit=*/migrations/* -m
+notifications:
+  email: false
